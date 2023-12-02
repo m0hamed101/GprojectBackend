@@ -1,7 +1,7 @@
 const express = require('express')
 
 // controller functions
-const { loginUser, createUser,deleteuser,updateuser, AllUsers,getUser,addcourse, getcourses } = require('../controller/userController')
+const { loginUser, createUser,deleteuser,updateuser, AllUsers,getUser,addcourse, getcourses, getallcourses } = require('../controller/userController')
 
 const router = express.Router()
 
@@ -27,6 +27,7 @@ router.get('/getuser/:_id', getUser)
 router.post('/AddCourse',addcourse)
 
 router.get('/getCourse/:_id',getcourses)
+router.get('/getallCourse/:userId',getallcourses)
 
 
 

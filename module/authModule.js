@@ -5,7 +5,7 @@ const validator = require('validator');
 const Schema = mongoose.Schema;
 const userSchema = new Schema({
     name: { type: String, required: true },
-    UserCourses: { type: mongoose.Schema.Types.ObjectId, ref: 'Courses' }, // Store a single course reference
+    // UserCourses: { type: mongoose.Schema.Types.ObjectId, ref: 'Courses' }, // Store a single course reference
     id: { type: Number, unique: true, required: true }, // Made "id" unique and required
     year: { type: Number },
     email: { type: String, unique: true, required: true }, // Made "email" unique and required

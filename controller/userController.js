@@ -1,5 +1,6 @@
 const User = require('../module/authModule')
 const Courses = require('../module/courseModule')
+const userCourses = require('../module/usercourseModule')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt');
 
@@ -103,44 +104,38 @@ const updateuser = async (req, res) => {
   }
 };
 
-const addcourse = async (req, res) => {
-  const { userId, courseId } = req.body;
-  // console.log(userId, courseId);
+// const addcourse = async (req, res) => {
+//   const { userId, courseId } = req.body;
+//   // console.log(userId, courseId);
+//   try {
+//     const user = await UserCourses.findOne({ "userid": userId, });
+//     const course = await UserCourses.findOne({ "courseid": courseId });
+//     // if user is not found create new user
 
-  try {
-    // Check if the user already has the course in their profile
-    const user = await User.findOne({ "_id": userId, "UserCourses": courseId });
 
-    // Check if the course exists
-    const course = await Courses.findOne({ "_id": courseId });
+//     // If the course is not found,add course
+//     if (!course) {
 
-    // If the course is not found, return an error
-    if (!course) {
-      res.status(404).send({ message: "Course not found" });
-      return;
-    }
+//     }
 
-    // If the user already has the course, return an error
-    if (user) {
-      res.status(400).send({ message: "Course is already added" });
-      return;
-    }
+//     // If the user already has the course,
+//     if (course) {
+//       res.status(400).send({ message: "Course is already added" });
+//       return;
+//     }
 
-    // Add the course to the user's profile
-    await User.findOneAndUpdate(
-      { "_id": userId },
-      { $push: { UserCourses: courseId } },
-      { new: true }
-    );
 
-    // No need to call save() after findOneAndUpdate
 
-    res.status(200).send({ message: "Course added successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ message: "An error occurred" });
-  }
-};
+
+//     res.status(200).send({ message: "Course added successfully" });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send({ message: "An error occurred" });
+//   }
+// };
+
+
+
 
 
 // const getcourses = async (req, res) => {
@@ -181,6 +176,103 @@ const addcourse = async (req, res) => {
 // };
 
 
+
+// const addcourse = async (req, res) => {
+//   const { userId, courseId } = req.body;
+
+
+//   // try {
+//   //   let user = await UserCourses.findOne({ "userid": userId });
+//   //   //If cart already exists for user,
+//   //   if (user) {
+//   //     const itemIndex = UserCourses.courses.findIndex((course) => course.courseId == courseId);
+//   //     //check if product exists or not
+
+//   //   }if (itemIndex > -1) {
+//   //     console.log(itemIndex);
+//   // }} catch (error) {
+//   //   console.log(error);
+//   // }
+
+//   try {
+//     let user = await userCourses.findOne({"userid":userId});
+//     // console.log(user);
+//     if (user) {
+//       let course = await user.courses.find({courseId});
+//       console.log(course);
+//       // let course = await user.courses.find({ courseId });
+//       if (course) {
+//         // let course = await UserCourses.courseId.findOne({ "courseid": courseId });
+//         console.log("already added");
+//         res.status(400).send({ message: "course is already added" })
+//       }
+//       if (!course) {
+//         // await UserCourses.courseIdfindOneAndUpdate(
+//         await userCourses.findOneAndUpdate(
+//           { "userid": userId },
+//           { $push: { "courseid": courseId } },
+//           { new: true, upsert: true }
+//         );
+//         res.status(200).send({ message: "Course added successfully" });
+//       } else {
+//         res.status(400).send({ message: "Course is already added" });
+//       }
+//     }
+//     if (!user) {
+//       user = await userCourses.create({ userid: userId, courseid: [courseId] });
+//       res.status(200).send({ message: "Course added successfully" });
+
+//     }
+//     // const course = await UserCourses.findOne({ "userid": userId, "courseid": courseId });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send({ message: "An error occurred" });
+//   }
+// };
+
+
+const addcourse = async (req, res) => {
+  const { userId, courseId } = req.body;
+
+  try {
+    let user = await userCourses.findOne({ "userid": userId });
+
+    if (user) {
+      // Check if the course is already added to the user
+      const isCourseAlreadyAdded = user.courses.some(course => course.courseId.equals(courseId));
+
+      if (isCourseAlreadyAdded) {
+        return res.status(400).send({ message: "Course is already added" });
+      } else {
+        // Add the course to the user's courses array
+        user.courses.push({ courseId });
+        await user.save();
+        return res.status(200).send({ message: "Course added successfully" });
+      }
+    } else {
+      // If the user does not exist, create a new user with the given course
+      user = await userCourses.create({ userid: userId, courses: [{ courseId }] });
+      return res.status(200).send({ message: "Course added successfully" });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({ message: "An error occurred" });
+  }
+};
+const getallcourses=async(req,res)=>{
+  const { userId } = req.params;
+
+  try {
+    const usercourse = await userCourses.findOne({ "userid":userId }).populate({
+      path: 'courses',populate: [{path: 'courseId'}]
+    })
+    // console.log(usercourse);
+    res.status(200).send(usercourse)
+}catch(err){
+  console.log(err);
+}}
+
+
 const getcourses = async (req, res) => {
   try {
     // Destructure the 'user' property from the request body
@@ -188,7 +280,7 @@ const getcourses = async (req, res) => {
     // console.log(user);
 
     // Use findOne if 'user' is an object with multiple criteria
-    
+
     const userCourse = await User.find(req.params).populate('UserCourses');
 
     if (!userCourse) {
@@ -206,6 +298,7 @@ const getcourses = async (req, res) => {
 };
 
 
+// Check if the user already has the course in their profile
 
 // const getcourses = async (req, res) => {
 //   try {
@@ -220,39 +313,12 @@ const getcourses = async (req, res) => {
 
 
 
+module.exports = { createUser, loginUser, deleteuser, updateuser, AllUsers, getUser, addcourse, getcourses,getallcourses }
 
-// const addcourse = async (req, res) => {
-//   const { userId, courseId } = req.body;
-
-//   try {
-//     const user = await User.find({ _id: userId });
-//     const course = await Courses.find({ _id: courseId });
-
-//     if (!user) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-
-//     if (!course) {
-//       return res.status(404).json({ message: "Course not found" });
-//     }
-
-//     // Check if the course is already added to the user's profile
-//     if (user.UserCourses.includes(course)) {
-//       return res.status(400).json({ message: "Course is already added" });
-//     }
-
-//     // Add the course to the user's profile
-//     user.UserCourses.push(course);
-//     await user.save();
-
-//     return res.status(200).json({ message: "Course added successfully" });
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).json({ message: "An error occurred" });
-//   }
-// };
-
-
-
-
-module.exports = { createUser, loginUser, deleteuser, updateuser, AllUsers, getUser, addcourse, getcourses }
+// No need to call save() after findOneAndUpdate
+// Add the course to the user's profile
+// await User.findOneAndUpdate(
+//   { "_id": userId },
+//   { $push: { UserCourses: courseId } },
+//   { new: true }
+// );
