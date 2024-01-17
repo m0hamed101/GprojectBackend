@@ -30,4 +30,13 @@ const CreateCourse = async (req, res) => {
         res.status(500).json({ error: 'An error occurred while creating the course' });
     }
 };
+
+const addmaterial=async(req,res)=>{
+    
+}
+
+
+
+
+
 module.exports = { CreateCourse,allCourse }

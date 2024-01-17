@@ -281,7 +281,8 @@ const getcourses = async (req, res) => {
 
     // Use findOne if 'user' is an object with multiple criteria
 
-    const userCourse = await User.find(req.params).populate('UserCourses');
+    // const userCourse = await User.find(req.params).populate('UserCourses');
+    const userCourse = await Courses.find(req.params)
 
     if (!userCourse) {
       // Return a 404 status if the user is not found
