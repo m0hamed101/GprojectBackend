@@ -10,13 +10,14 @@ const allCourse = async (req, res) => {
 }
 
 const CreateCourse = async (req, res) => {
-    const { courseName, DocName, ImageURL } = req.body;
+    const { courseName, DocName, ImageURL, materials } = req.body; // Include materials from req.body
     try {
         // Create a new course document
         const newCourse = new Course({
             courseName,
             DocName,
             ImageURL,
+            materials,
         });
 
         // Save the new course to the database
