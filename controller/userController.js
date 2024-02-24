@@ -259,21 +259,22 @@ const addcourse = async (req, res) => {
     return res.status(500).send({ message: "An error occurred" });
   }
 };
-const getallcourses=async(req,res)=>{
+const getallcourses = async (req, res) => {
   const { userId } = req.params;
 
   try {
-    const usercourse = await userCourses.findOne({ "userid":userId }).populate({
-      path: 'courses',populate: [{path: 'courseId'}]
+    const usercourse = await userCourses.findOne({ "userid": userId }).populate({
+      path: 'courses', populate: [{ path: 'courseId' }]
     })
     // console.log(usercourse);
     res.status(200).send(usercourse)
-}catch(err){
-  console.log(err);
-}}
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 
-const getcourses = async (req, res) => {
+const getcoursedetils = async (req, res) => {
   try {
     // Destructure the 'user' property from the request body
     // const { user } = req.params;
@@ -314,7 +315,7 @@ const getcourses = async (req, res) => {
 
 
 
-module.exports = { createUser, loginUser, deleteuser, updateuser, AllUsers, getUser, addcourse, getcourses,getallcourses }
+module.exports = { createUser, loginUser, deleteuser, updateuser, AllUsers, getUser, addcourse, getcoursedetils, getallcourses }
 
 // No need to call save() after findOneAndUpdate
 // Add the course to the user's profile

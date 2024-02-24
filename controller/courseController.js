@@ -31,12 +31,42 @@ const CreateCourse = async (req, res) => {
     }
 };
 
-const addmaterial=async(req,res)=>{
-    
-}
+
+const addLectureToCourse = async (req, res) => {
+    try {
+        const { course_id, lectureDetails } = req.body;
+
+        // Find the course by name
+        let course = await Course.findOne({_id:course_id} );
+
+        // If the course doesn't exist, return an error
+        if (!course) {
+            return res.status(404).json({ message: 'Course not found' });
+        }
+
+        // Add the new lecture to the materials array of the existing course
+        course.materials.push({
+            title: lectureDetails.title,
+            description: lectureDetails.description,
+            type:lectureDetails.type,
+            fileLink: lectureDetails.fileLink,
+            // lectureDetails: {
+            //     duration: lectureDetails.duration,
+            // },
+        });
+
+        // Save the course with the new lecture
+        await course.save();
+
+        res.status(201).json({ message: 'Lecture added to the course successfully', course });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
 
 
 
 
 
-module.exports = { CreateCourse,allCourse }
+module.exports = { CreateCourse, allCourse,addLectureToCourse }
