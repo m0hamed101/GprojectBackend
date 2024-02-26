@@ -53,26 +53,65 @@ const createUser = async (req, res) => {
     // create a token
     const token = createToken(user._id)
 
-    res.status(200).json({ email, token })
+    res.status(200).json({ email })
   } catch (error) {
     res.status(400).json({ error: error.message })
   }
 }
 // deleteuser
 const deleteuser = async (req, res) => {
-  const { userid } = req.body
   try {
-    const deletedItem = await User.findOneAndDelete(userid)
-    if (!deletedItem) {
-      res.status(404).send({ error: "Item not found" })
-    }
-    // res.send(deletedItem)
-    res.send("done")
-  } catch (error) {
-    res.status(400).send(error)
+    const itemId = req.params;
+    await User.findByIdAndDelete(itemId);
+    res.json({ message: 'Item deleted successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server Error' });
   }
+};
 
+const deletecourses = async (req, res) => {
+  try {
+    const itemId = req.params;
+    await Courses.findByIdAndDelete(itemId);
+    res.json({ message: 'Item deleted successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+
+const deleteMaterial = async (req, res) => {
+  try {
+    const { courseId, materialId } = req.params;
+    const course = await Courses.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+
+    // Find the index of the material in the materials array
+    const materialIndex = course.materials.findIndex(material => material._id.toString() === materialId);
+    if (materialIndex === -1) {
+      return res.status(404).json({ message: 'Material not found' });
+    }
+
+    // Remove the material from the materials array
+    course.materials.splice(materialIndex, 1);
+
+    // Save the updated course
+    await course.save();
+
+    res.json({ message: 'Material deleted successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server Error' });
+  }
 }
+
+
+
+
 // updateuser
 const updateuser = async (req, res) => {
   const { name, id, year, email, password, permission } = req.body;
@@ -315,7 +354,7 @@ const getcoursedetils = async (req, res) => {
 
 
 
-module.exports = { createUser, loginUser, deleteuser, updateuser, AllUsers, getUser, addcourse, getcoursedetils, getallcourses }
+module.exports = { createUser, loginUser, deleteuser, deletecourses,deleteMaterial, updateuser, AllUsers, getUser, addcourse, getcoursedetils, getallcourses }
 
 // No need to call save() after findOneAndUpdate
 // Add the course to the user's profile

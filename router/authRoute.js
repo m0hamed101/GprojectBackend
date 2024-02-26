@@ -1,7 +1,7 @@
 const express = require('express')
 
 // controller functions
-const { loginUser, createUser,deleteuser,updateuser, AllUsers,getUser,addcourse, getcoursedetils, getallcourses} = require('../controller/userController')
+const { loginUser, createUser,deleteuser,deleteMaterial,updateuser, AllUsers,getUser,addcourse, getcoursedetils, getallcourses,deletecourses} = require('../controller/userController')
 
 const router = express.Router()
 
@@ -12,7 +12,9 @@ router.post('/createUser', createUser)
 router.post('/updateuser', updateuser)
 
 // deleteUser route
-router.delete('/deleteuser',deleteuser)
+router.delete('/deleteuser/:_id',deleteuser)
+router.delete('/deletecourses/:_id',deletecourses)
+router.delete('/deleteMaterial/:courseId/:materialId',deleteMaterial)
 
 // login route
 router.post('/login', loginUser)
