@@ -11,12 +11,15 @@ app.use(cors())
 // import 
 const authRouter= require('./router/authRoute');
 const courseRouter= require('./router/courseRouter');
+const quizRouter= require('./router/quizRoute');
 
 
 
 // routes
 app.use('/api/user', authRouter)
 app.use('/api/course', courseRouter)
+app.use('/api/quiz',quizRouter)
+
 
 
 // connection To DataBase
