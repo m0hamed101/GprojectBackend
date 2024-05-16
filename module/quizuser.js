@@ -11,8 +11,8 @@ const quizUserSchema = new Schema({
     userAnswer: { type: String },
     correctAnswer: { type: String }
   }],
-  score: { type: Number,default: 0 },
-  attemptNumber: { type: Number,default: 0 },
+  score: { type: Number,default: 1 },
+  userAttempts: { type: Number,default: 1 },
 });
 
 const QuizUser = mongoose.model('QuizUser', quizUserSchema);

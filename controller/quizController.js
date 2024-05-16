@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Course = require("../module/courseModule");
 const QuizUser = require("../module/quizuser");
+
 const fetchQuestions = async (req, res) => {
   const { courseId, userId, quizId } = req.body;
   
@@ -23,8 +24,33 @@ const fetchQuestions = async (req, res) => {
     // Check if quizDetails is found
     if (!quizDetails) return res.status(404).json({ error: "Quiz not found" });
 
-    // Return quizDetails
-    res.status(200).json({ quizDetails });
+    // Find or create QuizUser
+    let quizUser = await QuizUser.findOne({ courseId, userId, quizId });
+
+    // If quizUser is not found, create a new one
+    if (!quizUser) {
+      quizUser = new QuizUser({
+        userId,
+        courseId,
+        quizId,
+        answers: [],
+        score: 0,
+        userAttempts: 1
+      });
+
+      await quizUser.save();
+    }
+
+    // Fetch all quiz data
+    const allQuizData = {
+      quizDetails,
+      score: quizUser.score,
+      userAttempts: quizUser.userAttempts
+      // Add any other relevant data here
+    };
+
+    // Return all quiz data
+    res.status(200).json(allQuizData);
   } catch (error) {
     console.error("Error fetching quiz details:", error);
     res.status(500).json({ error: "Internal server error" });
