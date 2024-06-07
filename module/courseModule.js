@@ -12,29 +12,30 @@ const courseSchema = new Schema({
     type: { type: String, enum: ["lecture", "quiz", "assignment"], required: true },
     fileLink: { type: String },
     quizDetails: {
-      questions: [{
-        question: { type: String, required: function () { return this.type === "quiz"; } },
-        type: { type: String, enum: ["MCQ", "ANSWER"] },
-        options: {
-          type: [{
+      type: {
+        questions: [{
+          question: { type: String, required: true },
+          type: { type: String, enum: ["MCQ", "ANSWER"], required: true },
+          options: [{
             option: { type: String }
           }],
-          validate: {
-            validator: function () {
-              return this.type === "MCQ" ? this.options.length === 4 : true;
-            },
-            message: 'Four options are required for MCQ type questions.'
-          }
-        },
-        answer: { type: String, required: function () { return this.type === "quiz"; } },
-        points: { type: Number, required: function () { return this.type === "quiz"; } }
-      }],
-      timeLimitMinutes: { type: Number,default:300 },
-      maxAttempts: { type: Number,default:1 }
+          right_answer: { type: String, required: true },
+          points: { type: Number, required: true }
+        }],
+        timeLimitMinutes: { type: Number, default: 300 },
+        maxAttempts: { type: Number, default: 1 }
+      },
+      required: function() { return this.type === "quiz"; }
     },
     assignmentDetails: {
-      dueDate: { type: Date },
-      maxPoints: { type: Number }
+      dueDate: { type: Date, default: Date.now },
+      maxPoints: { type: Number, default: 0},
+      user_details: [{
+        id: { type:String},
+        username: { type: String},
+        user_score: { type:Number, default: 0},
+        filelink: { type: String },
+      }]
     }
   }]
 });
