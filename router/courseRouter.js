@@ -11,7 +11,7 @@ const {
 
 // Create a new course
 router.post('/createcourse', createCourse);
-router.post('/allcourse', getAllCourses);
+router.get('/allcourse', getAllCourses);
 
 // Add a lecture to a course
 router.post('/addLectureToCourse', addLectureToCourse);
