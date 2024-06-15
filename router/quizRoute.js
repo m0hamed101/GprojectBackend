@@ -25,6 +25,6 @@ router.get('/:courseId/edit_quiz/:_id', getQuiz);
 router.post('/:courseId/edit_quiz/:_id', updateQuiz);
 
 // Route to add question to quiz
-router.post('/:courseId/add_question', addQuestion);
+router.post('/:courseId/addQuestion', addQuestion);
 
 module.exports = router;

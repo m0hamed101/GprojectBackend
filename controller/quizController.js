@@ -18,7 +18,9 @@ const fetchQuestions = async (req, res) => {
 
     // Find the course
     const course = await Course.findById(courseId);
-    if (!course) return res.status(404).json({ error: 'Course not found' });
+    if (!course) {
+      return res.status(404).json({ error: 'Course not found' });
+    }
 
     // Find the quiz details within the course materials
     const quizDetails = course.materials.find(
@@ -27,7 +29,9 @@ const fetchQuestions = async (req, res) => {
     );
 
     // Check if quizDetails is found
-    if (!quizDetails) return res.status(404).json({ error: 'Quiz not found' });
+    if (!quizDetails) {
+      return res.status(404).json({ error: 'Quiz not found' });
+    }
 
     // Find or create QuizUser
     let quizUser = await QuizUser.findOne({ courseId, userId, quizId });
@@ -156,7 +160,7 @@ const addQuestion = async (req, res) => {
       newQuestion = {
         question,
         type,
-        options,
+        options: options.map((option) => ({ option })),
         right_answer: rightAnswer,
       };
     } else if (type === 'ANSWER') {
@@ -243,7 +247,6 @@ const updateQuiz = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
-
 
 module.exports = {
   fetchQuestions,
