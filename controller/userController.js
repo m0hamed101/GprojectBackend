@@ -166,18 +166,54 @@ const addcourse = async (req, res) => {
     return res.status(500).send({ message: "An error occurred" });
   }
 };
+
+const deleteCourse = async (req, res) => {
+  const { userId, courseId } = req.params;
+
+  try {
+    let user = await userCourses.findOne({ "userid": userId });
+
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    // Check if the course exists in the user's courses
+    const courseIndex = user.courses.findIndex(course => course.courseId.equals(courseId));
+
+    if (courseIndex === -1) {
+      return res.status(404).send({ message: "Course not found for this user" });
+    }
+
+    // Remove the course from the user's courses array
+    user.courses.splice(courseIndex, 1);
+    await user.save();
+
+    return res.status(200).send({ message: "Course deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({ message: "An error occurred" });
+  }
+};
+
 const getallcourses = async (req, res) => {
   const { userId } = req.params;
 
   try {
-    const usercourse = await userCourses.findOne({ "userid": userId }).populate({
-      path: 'courses', populate: [{ path: 'courseId' }]
-    })
-    res.status(200).send(usercourse)
+    const usercourse = await userCourses.findOne({ userid: userId }).populate({
+      path: 'courses.courseId' // Populate the courseId field in the courses array
+    });
+
+    if (!usercourse) {
+      return res.status(404).json({ message: "User courses not found" });
+    }
+
+    res.status(200).json(usercourse.courses); // Return the courses array
   } catch (err) {
-    console.log(err);
+    console.error(err);
+    res.status(500).json({ message: "Internal server error" });
   }
-}
+};
+
 const getcoursedetils = async (req, res) => {
   try {
     // Destructure the 'user' property from the request body
@@ -205,4 +241,4 @@ const getcoursedetils = async (req, res) => {
 
 
 
-module.exports = { createUser, loginUser, deleteuser, deletecourses,deleteMaterial, updateuser, AllUsers, getUser, addcourse, getcoursedetils, getallcourses }
+module.exports = { createUser, loginUser, deleteuser, deletecourses,deleteMaterial, updateuser, AllUsers, getUser, addcourse, getcoursedetils, getallcourses,deleteCourse }

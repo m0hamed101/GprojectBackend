@@ -1,7 +1,7 @@
 const express = require('express')
 
 // controller functions
-const { loginUser, createUser,deleteuser,deleteMaterial,updateuser, AllUsers,getUser,addcourse, getcoursedetils, getallcourses,deletecourses} = require('../controller/userController')
+const { loginUser, createUser, deleteuser, deleteMaterial, updateuser, AllUsers, getUser, addcourse, getcoursedetils, getallcourses, deletecourses,deleteCourse } = require('../controller/userController')
 
 const router = express.Router()
 
@@ -12,9 +12,11 @@ router.post('/createUser', createUser)
 router.post('/updateuser', updateuser)
 
 // deleteUser route
-router.delete('/deleteuser/:_id',deleteuser)
-router.delete('/deletecourses/:_id',deletecourses)
-router.delete('/deleteMaterial/:courseId/:materialId',deleteMaterial)
+router.delete('/deleteuser/:_id', deleteuser)
+router.delete('/deletecourses/:_id', deletecourses)
+
+
+router.delete('/deleteMaterial/:courseId/:materialId', deleteMaterial)
 
 // login route
 router.post('/login', loginUser)
@@ -26,10 +28,12 @@ router.get('/allusers', AllUsers)
 router.get('/getuser/:_id', getUser)
 
 // AddCourseToUser
-router.post('/AddCourse',addcourse)
+router.post('/AddCourse', addcourse)
+router.delete('/DeleteCourse/:userId/:courseId', deleteCourse);
 
-router.get('/getcoursedetils/:_id',getcoursedetils)
-router.get('/getallCourse/:userId',getallcourses)
+
+router.get('/getcoursedetils/:_id', getcoursedetils)
+router.get('/getallCourse/:userId', getallcourses)
 
 
 
