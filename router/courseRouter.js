@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {
     createCourse,
-    addLectureToCourse,
+    addMaterialToCourse,
     getAssignmentById,
     uploadUserDetails,
     updateScore,
@@ -14,7 +14,7 @@ router.post('/createcourse', createCourse);
 router.get('/allcourse', getAllCourses);
 
 // Add a lecture to a course
-router.post('/addLectureToCourse', addLectureToCourse);
+router.post('/addMaterialToCourse', addMaterialToCourse);
 
 // Get assignment details by course ID and assignment ID
 router.get('/:courseId/assignments/:assignmentId', getAssignmentById);

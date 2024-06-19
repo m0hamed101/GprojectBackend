@@ -20,9 +20,9 @@ const createCourse = async (req, res) => {
 };
 
 // Add a lecture to a course
-const addLectureToCourse = async (req, res) => {
+const addMaterialToCourse = async (req, res) => {
     try {
-        const { course_id, lectureDetails } = req.body;
+        const { course_id, materialDetails } = req.body;
         let course = await Course.findOne({ _id: course_id });
 
         if (!course) {
@@ -30,19 +30,20 @@ const addLectureToCourse = async (req, res) => {
         }
 
         course.materials.push({
-            title: lectureDetails.title,
-            description: lectureDetails.description,
-            type: lectureDetails.type,
-            fileLink: lectureDetails.fileLink,
+            title: materialDetails.title,
+            description: materialDetails.description,
+            type: materialDetails.type,
+            fileLink: materialDetails.fileLink,
         });
 
         await course.save();
-        res.status(201).json({ message: 'Lecture added to the course successfully', course });
+        res.status(201).json({ message: 'Material added to the course successfully', course });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });
     }
 };
+
 
 // Get assignment details by course ID and assignment ID
 const getAssignmentById = async (req, res) => {
@@ -184,7 +185,7 @@ const getAllCourses = async (req, res) => {
 
 module.exports = {
     createCourse,
-    addLectureToCourse,
+    addMaterialToCourse,
     getAssignmentById,
     uploadUserDetails,
     updateScore,
