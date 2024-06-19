@@ -18,11 +18,11 @@ router.post('/incrementUserAttempts', incrementUserAttempts);
 // Route to submit the quiz
 router.post('/submitQuiz', submitQuiz);
 
-// Route to get quiz data
+// Route to get quiz data (single quiz)
 router.get('/:courseId/edit_quiz/:_id', getQuiz);
 
 // Route to update quiz data
-router.post('/:courseId/edit_quiz/:_id', updateQuiz);
+router.put('/:courseId/edit_quiz/:_id', updateQuiz);
 
 // Route to add question to quiz
 router.post('/:courseId/addQuestion', addQuestion);

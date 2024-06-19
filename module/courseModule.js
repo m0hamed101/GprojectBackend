@@ -3,28 +3,29 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const courseSchema = new Schema({
-  courseName: { type: String},
-  DocName: { type: String},
-  ImageURL: { type: String},
+  courseName: { type: String },
+  DocName: { type: String },
+  ImageURL: { type: String },
   materials: [{
-    title: { type: String},
+    title: { type: String },
     description: { type: String },
-    type: { type: String, enum: ["lecture", "quiz", "assignment"]},
+    type: { type: String, enum: ["lecture", "quiz", "assignment"] },
     fileLink: { type: String },
     quizDetails: {
       type: {
         questions: [{
-          question: { type: String},
-          type: { type: String, enum: ["MCQ", "ANSWER"]},
+          question: { type: String },
+          type: { type: String, enum: ["MCQ", "ANSWER", "SOUND", "FILE"] },
           options: [{
             option: { type: String }
           }],
-          right_answer: { type: String}
+          right_answer: { type: String }
         }],
         timeLimitMinutes: { type: Number, default: 300 },
+        deadline: { type: Date }, // Added deadline field here
         maxAttempts: { type: Number, default: 1 }
       },
-      required: function() { return this.type === "quiz"; }
+      required: function () { return this.type === "quiz"; }
     },
     assignmentDetails: {
       dueDate: { type: Date, default: Date.now },

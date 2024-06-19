@@ -190,6 +190,7 @@ const getQuiz = async (req, res) => {
   try {
     const { courseId, _id } = req.params;
     const course = await Course.findById(courseId);
+   
     if (!course) {
       return res.status(404).json({ message: 'Course not found' });
     }
@@ -228,25 +229,33 @@ const updateQuiz = async (req, res) => {
     if (quizData.title) material.title = quizData.title;
     if (quizData.description) material.description = quizData.description;
     if (quizData.quizDetails) {
-      if (quizData.quizDetails.timeLimitMinutes) {
+      if (quizData.quizDetails.timeLimitMinutes !== undefined) {
         material.quizDetails.timeLimitMinutes = quizData.quizDetails.timeLimitMinutes;
       }
-      if (quizData.quizDetails.maxAttempts) {
+      if (quizData.quizDetails.maxAttempts !== undefined) {
         material.quizDetails.maxAttempts = quizData.quizDetails.maxAttempts;
       }
       if (quizData.quizDetails.questions) {
         material.quizDetails.questions = quizData.quizDetails.questions;
       }
+      if (quizData.quizDetails.deadline) {
+        material.quizDetails.deadline = new Date(quizData.quizDetails.deadline); // Convert to Date object
+      }
     }
 
     await course.save();
 
-    res.json(material);
+    // Return updated quiz material
+    res.json({
+      ...material.toObject(),
+      deadline: material.quizDetails.deadline // Return the updated deadline here
+    });
   } catch (err) {
     console.error('Error updating quiz:', err);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
 
 module.exports = {
   fetchQuestions,
