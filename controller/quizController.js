@@ -55,6 +55,7 @@ const fetchQuestions = async (req, res) => {
       quizDetails,
       score: quizUser.score,
       userAttempts: quizUser.userAttempts,
+      answers: quizUser.answers,
       timeLimitMinutes: quizDetails.quizDetails.timeLimitMinutes,
       maxAttempts: quizDetails.quizDetails.maxAttempts,
       // Add any other relevant data here
@@ -97,33 +98,55 @@ const incrementUserAttempts = async (req, res) => {
   }
 };
 
-// Function to submit the quiz
-const submitQuiz = async (req, res) => {
-  const { courseId, userId, quizId, answers, score } = req.body;
+// controllers/quizUser.js
 
+// Function to handle quiz submission
+const submitQuiz = async (req, res) => {
   try {
-    // Check if the provided IDs are valid ObjectId values
-    if (
-      !mongoose.Types.ObjectId.isValid(courseId) ||
-      !mongoose.Types.ObjectId.isValid(userId) ||
-      !mongoose.Types.ObjectId.isValid(quizId)
-    ) {
-      return res.status(400).json({ error: 'Invalid ID format' });
+    const { userId, courseId, quizId, data } = req.body;
+
+    // Prepare answers for database insertion
+    const answers = data.map(item => ({
+      question: item.question,
+      userAnswer: item.student_answer || item.URL, // Adjust as per your data structure
+      score: item.score || 0,
+    }));
+
+    // Calculate total score
+    const totalScore = answers.reduce((total, item) => total + (item.score || 0), 0);
+
+    // Check if there's an existing quiz attempt
+    let quizUser = await QuizUser.findOne({ userId, courseId, quizId });
+
+    if (!quizUser) {
+      // Create new QuizUser instance if not exists
+      quizUser = new QuizUser({
+        userId,
+        courseId,
+        quizId,
+        answers,
+        total_score: totalScore,
+        userAttempts: 1, // Increase user attempts
+      });
+    } else {
+      // Update existing QuizUser instance
+      quizUser.answers = answers;
+      quizUser.total_score = totalScore;
+      quizUser.userAttempts += 1; // Increase user attempts
     }
 
-    // Find and update QuizUser with answers and score
-    let quizUser = await QuizUser.findOneAndUpdate(
-      { courseId, userId, quizId },
-      { answers, score },
-      { new: true }
-    );
+    // Save to database
+    await quizUser.save();
 
-    // Return updated quizUser
-    res.status(200).json({ message: 'Quiz submitted successfully', quizUser });
+    res.status(200).json({ message: 'Quiz submission successful' });
   } catch (error) {
     console.error('Error submitting quiz:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
+};
+
+module.exports = {
+  submitQuiz,
 };
 
 // Function to add question to quiz

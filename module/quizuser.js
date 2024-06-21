@@ -7,12 +7,12 @@ const quizUserSchema = new Schema({
   courseId: { type: Schema.Types.ObjectId, ref: 'Course', required: true },
   quizId: { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true },
   answers: [{
-    question: { type: String, required: true },
+    question: { type: String },
     userAnswer: { type: String },
-    correctAnswer: { type: String }
+    score: { type: Number,default: 0  }
   }],
-  score: { type: Number,default: 1 },
-  userAttempts: { type: Number,default: 1 },
+  total_score: { type: Number,default: 0 },
+  userAttempts: { type: Number,default: 0 },
 });
 
 const QuizUser = mongoose.model('QuizUser', quizUserSchema);
