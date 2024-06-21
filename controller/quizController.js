@@ -145,10 +145,6 @@ const submitQuiz = async (req, res) => {
   }
 };
 
-module.exports = {
-  submitQuiz,
-};
-
 // Function to add question to quiz
 const addQuestion = async (req, res) => {
   const { courseId } = req.params;
@@ -235,8 +231,8 @@ const updateQuiz = async (req, res) => {
     const { courseId, _id } = req.params;
     const { quizData } = req.body;
 
-    console.log('Updating quiz with courseId:', courseId, 'and _id:', _id);
-    console.log('Received quizData:', quizData);
+    // console.log('Updating quiz with courseId:', courseId, 'and _id:', _id);
+    // console.log('Received quizData:', quizData);
 
     const course = await Course.findById(courseId);
     if (!course) {

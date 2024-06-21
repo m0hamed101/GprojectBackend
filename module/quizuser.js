@@ -11,7 +11,7 @@ const quizUserSchema = new Schema({
     userAnswer: { type: String },
     score: { type: Number,default: 0  }
   }],
-  total_score: { type: Number,default: 0 },
+  // total_score: { type: Number,default: 0 },
   userAttempts: { type: Number,default: 0 },
 });
 
